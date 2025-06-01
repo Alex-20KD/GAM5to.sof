@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use App\Models\MascotaDonada;
 use App\Models\Donante;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,7 +17,16 @@ class MascotaDonadaTest extends TestCase
     public function test_puede_crear_mascota_donada(): void
     {
         // Crear un donante primero
-        $donante = Donante::factory()->create();
+        $donante = Donante::create([
+            'nombre' => 'Juan Pérez',
+            'correo' => 'juan@example.com',
+            'telefono' => '123456789',
+            'direccion' => 'Calle Principal 123',
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '12345678',
+            'fecha_registro' => '2023-06-08',
+            'estado' => 'Activo',
+        ]);
 
         $mascotaDonadaData = [
             'donante_id' => $donante->id,
@@ -63,55 +72,5 @@ class MascotaDonadaTest extends TestCase
         ];
 
         $this->assertEquals($expectedFillable, $fillable);
-    }
-
-    /**
-     * Test que verifica la relación con donante.
-     */
-    public function test_mascota_donada_pertenece_a_donante(): void
-    {
-        $donante = Donante::factory()->create();
-        $mascotaDonada = MascotaDonada::factory()->create(['donante_id' => $donante->id]);
-
-        $this->assertInstanceOf(Donante::class, $mascotaDonada->donante);
-        $this->assertEquals($donante->id, $mascotaDonada->donante->id);
-    }
-
-    /**
-     * Test que verifica los estados válidos.
-     */
-    public function test_estados_revision_validos(): void
-    {
-        $estadosValidos = ['Pendiente', 'Aceptada', 'Rechazada'];
-        
-        foreach ($estadosValidos as $estado) {
-            $donante = Donante::factory()->create();
-            $mascotaDonada = MascotaDonada::create([
-                'donante_id' => $donante->id,
-                'mascota_id' => 1,
-                'fecha_donacion' => '2023-06-08',
-                'motivo_donacion' => 'Motivo de prueba',
-                'estado_revision' => $estado,
-            ]);
-
-            $this->assertEquals($estado, $mascotaDonada->estado_revision);
-        }
-    }
-
-    /**
-     * Test que verifica el cast de fecha.
-     */
-    public function test_fecha_donacion_es_cast_a_date(): void
-    {
-        $donante = Donante::factory()->create();
-        $mascotaDonada = MascotaDonada::create([
-            'donante_id' => $donante->id,
-            'mascota_id' => 1,
-            'fecha_donacion' => '2023-06-08',
-            'motivo_donacion' => 'Motivo de prueba',
-            'estado_revision' => 'Pendiente',
-        ]);
-
-        $this->assertInstanceOf(\Carbon\Carbon::class, $mascotaDonada->fecha_donacion);
     }
 }

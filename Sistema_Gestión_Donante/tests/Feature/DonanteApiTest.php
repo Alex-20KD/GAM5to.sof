@@ -11,6 +11,14 @@ class DonanteApiTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        
+        // Asegurar que las rutas estén cargadas
+        $this->artisan('route:cache');
+    }
+
     /**
      * Test para obtener todos los donantes.
      */

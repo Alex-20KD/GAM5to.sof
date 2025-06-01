@@ -24,3 +24,12 @@ Homestead.yaml
 npm-debug.log
 Thumbs.db
 yarn-error.log
+routes/console.php
+routes/web.php
+storage/api-docs
+public
+artisan
+changelog.md
+readme.md
+phpunit.xml
+vite.config.js

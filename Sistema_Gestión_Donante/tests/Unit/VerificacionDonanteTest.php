@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use App\Models\VerificacionDonante;
 use App\Models\Donante;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,7 +17,16 @@ class VerificacionDonanteTest extends TestCase
     public function test_puede_crear_verificacion_donante(): void
     {
         // Crear un donante primero
-        $donante = Donante::factory()->create();
+        $donante = Donante::create([
+            'nombre' => 'Juan Pérez',
+            'correo' => 'juan@example.com',
+            'telefono' => '123456789',
+            'direccion' => 'Calle Principal 123',
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '12345678',
+            'fecha_registro' => '2023-06-08',
+            'estado' => 'Activo',
+        ]);
 
         $verificacionDonanteData = [
             'donante_id' => $donante->id,
@@ -67,8 +76,23 @@ class VerificacionDonanteTest extends TestCase
      */
     public function test_verificacion_donante_pertenece_a_donante(): void
     {
-        $donante = Donante::factory()->create();
-        $verificacionDonante = VerificacionDonante::factory()->create(['donante_id' => $donante->id]);
+        $donante = Donante::create([
+            'nombre' => 'Juan Pérez',
+            'correo' => 'juan@example.com',
+            'telefono' => '123456789',
+            'direccion' => 'Calle Principal 123',
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '12345678',
+            'fecha_registro' => '2023-06-08',
+            'estado' => 'Activo',
+        ]);
+
+        $verificacionDonante = VerificacionDonante::create([
+            'donante_id' => $donante->id,
+            'fecha_verificacion' => '2023-06-08',
+            'resultado' => 'Aprobado',
+            'observaciones' => 'Observaciones de prueba',
+        ]);
 
         $this->assertInstanceOf(Donante::class, $verificacionDonante->donante);
         $this->assertEquals($donante->id, $verificacionDonante->donante->id);
@@ -81,8 +105,18 @@ class VerificacionDonanteTest extends TestCase
     {
         $resultadosValidos = ['Aprobado', 'Observación', 'Rechazado'];
         
-        foreach ($resultadosValidos as $resultado) {
-            $donante = Donante::factory()->create();
+        foreach ($resultadosValidos as $index => $resultado) {
+            $donante = Donante::create([
+                'nombre' => 'Juan Pérez ' . $index,
+                'correo' => 'juan' . $index . '@example.com',
+                'telefono' => '123456789',
+                'direccion' => 'Calle Principal 123',
+                'tipo_documento' => 'DNI',
+                'numero_documento' => '1234567' . $index,
+                'fecha_registro' => '2023-06-08',
+                'estado' => 'Activo',
+            ]);
+
             $verificacionDonante = VerificacionDonante::create([
                 'donante_id' => $donante->id,
                 'fecha_verificacion' => '2023-06-08',
@@ -99,7 +133,17 @@ class VerificacionDonanteTest extends TestCase
      */
     public function test_fecha_verificacion_es_cast_a_date(): void
     {
-        $donante = Donante::factory()->create();
+        $donante = Donante::create([
+            'nombre' => 'Juan Pérez',
+            'correo' => 'juan@example.com',
+            'telefono' => '123456789',
+            'direccion' => 'Calle Principal 123',
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '12345678',
+            'fecha_registro' => '2023-06-08',
+            'estado' => 'Activo',
+        ]);
+
         $verificacionDonante = VerificacionDonante::create([
             'donante_id' => $donante->id,
             'fecha_verificacion' => '2023-06-08',
@@ -115,7 +159,17 @@ class VerificacionDonanteTest extends TestCase
      */
     public function test_observaciones_pueden_ser_nulas(): void
     {
-        $donante = Donante::factory()->create();
+        $donante = Donante::create([
+            'nombre' => 'Juan Pérez',
+            'correo' => 'juan@example.com',
+            'telefono' => '123456789',
+            'direccion' => 'Calle Principal 123',
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '12345678',
+            'fecha_registro' => '2023-06-08',
+            'estado' => 'Activo',
+        ]);
+
         $verificacionDonante = VerificacionDonante::create([
             'donante_id' => $donante->id,
             'fecha_verificacion' => '2023-06-08',
@@ -131,7 +185,16 @@ class VerificacionDonanteTest extends TestCase
      */
     public function test_donante_puede_tener_multiples_verificaciones(): void
     {
-        $donante = Donante::factory()->create();
+        $donante = Donante::create([
+            'nombre' => 'Juan Pérez',
+            'correo' => 'juan@example.com',
+            'telefono' => '123456789',
+            'direccion' => 'Calle Principal 123',
+            'tipo_documento' => 'DNI',
+            'numero_documento' => '12345678',
+            'fecha_registro' => '2023-06-08',
+            'estado' => 'Activo',
+        ]);
         
         $verificacion1 = VerificacionDonante::create([
             'donante_id' => $donante->id,
