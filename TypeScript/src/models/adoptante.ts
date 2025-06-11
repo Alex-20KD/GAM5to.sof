@@ -1,17 +1,43 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Adopcion } from "./adopcion";
+import { SolicitudAdopcion } from "./Solicitud_Adopcion";
+import { Entrevista } from "./Entrevista";
+import { Mascota } from "./Mascota";
 
 @Entity()
 export class Adoptante {
-  @PrimaryGeneratedColumn()
-  id!: number;
+@PrimaryGeneratedColumn()
+id!: number;
 
-  @Column()
-  nombre!: string;
+@Column()
+nombre!: string;
 
-  @Column()
-  fecha!: Date;
+@Column()
+correo!: string;
 
-  @OneToMany(() => Adopcion, (fecha) => fecha.adoptante)
-  fechasAdopcion!: Adopcion[];
+@Column()
+telefono!: string;
+
+@Column()
+direccion!: string;
+
+@Column()
+tipo_documento!: string;
+
+@Column()
+numero_documento!: string;
+
+@Column({ type: 'date' })
+fecha_registro!: Date;
+
+@Column()
+estado!: string;
+
+@OneToMany(() => SolicitudAdopcion, (solicitud) => solicitud.adoptante)
+solicitudes!: SolicitudAdopcion[];
+
+@OneToMany(() => Entrevista, (entrevista) => entrevista.adoptante)
+entrevistas!: Entrevista[];
+
+@OneToMany(() => Mascota, (mascota) => mascota.adoptante)
+mascotas!: Mascota[];
 }

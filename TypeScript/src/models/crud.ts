@@ -1,23 +1,48 @@
-import { AppDataSource } from "../data-source";
-import { Mascota } from "./mascota";
-import { Adopcion } from "./adopcion";
+import { AppDataSource } from "../database/data-source";
+import { Mascota } from "../models/Mascota";
+import { Adoptante } from "../models/Adoptante";
+import { SolicitudAdopcion } from "../models/Solicitud_Adopcion";
+import { AcuerdoAdopcion } from "../models/Acuerdo_Adopcion";
 
-export async function crearAdopcion() {
-  const mascota = new Mascota();
-  mascota.nombre = "Sissy";
-  mascota.especie = "Gato";
+export async function crearAdopcionCompleta() {
+  
+// Crear o buscar un adoptante
+const adoptante = new Adoptante();
+adoptante.nombre = "Fabiana Parra";
+adoptante.correo = "Fabiana@example.com";
+adoptante.telefono = "0999988888";
+await AppDataSource.manager.save(adoptante);
 
-  const adopcion = new Adopcion();
-  adopcion.tipo = "Definitiva";  // O "Temporal", según se requiera
-  adopcion.fecha = new Date();
-  adopcion.mascota = mascota;
+// Crear mascota
+const mascota = new Mascota();
+mascota.nombre = "Sissy";
+mascota.especie = "Gato";
+mascota.edad = 2;
+mascota.sexo = "Hembra";
+await AppDataSource.manager.save(mascota);
 
-  await AppDataSource.manager.save(mascota);
-  await AppDataSource.manager.save(adopcion);
+// Crear solicitud de adopción
+const solicitud = new SolicitudAdopcion();
+solicitud.adoptante = adoptante;
+solicitud.mascota = mascota;
+solicitud.fecha_solicitud = new Date();
+solicitud.estado = "Pendiente";
+await AppDataSource.manager.save(solicitud);
+
+// Crear acuerdo (temporal o permanente)
+const acuerdo = new AcuerdoAdopcion();
+acuerdo.solicitud = solicitud;
+acuerdo.tipo = "Temporal"; // o "Permanente"
+acuerdo.duracion_dias = 30;
+acuerdo.condiciones = "Debe realizar control veterinario quincenal.";
+await AppDataSource.manager.save(acuerdo);
+
+console.log("Adopción creada con éxito");
 }
 
-export async function listarAdopciones() {
-  return await AppDataSource.manager.find(Adopcion, {
-    relations: ["mascota"],
-  });
+export async function listarSolicitudesConMascotaYAdoptante() {
+const solicitudes = await AppDataSource.getRepository(SolicitudAdopcion).find({
+relations: ["adoptante", "mascota", "acuerdoAdopcion"]
+});
+return solicitudes;
 }
